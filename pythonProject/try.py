@@ -2,13 +2,13 @@ import pandas as pd
 from collections import Counter
 import os
 
-def convert_excel_to_csv_if_needed(xlsx_path, csv_path):
+def convert_excel_to_csv(xlsx_path, csv_path):
     """אם הקובץ CSV לא קיים – המרה חד-פעמית מ-Excel ל-CSV"""
     if not os.path.exists(csv_path):
         print("הקובץ CSV לא נמצא – מתבצעת המרה מ-Excel...")
         df = pd.read_excel(xlsx_path)
         df.to_csv(csv_path, index=False)
-        print("ההמרה הושלמה.")
+        print("conversion finish")
     else:
         print("הקובץ CSV כבר קיים – אין צורך בהמרה.")
 
@@ -34,8 +34,8 @@ csv_file = '../logs.txt.csv'
 
 print("📁 קבצים בתיקייה:", os.listdir('../'))
 
-# המרה חד-פעמית (אם צריך)
-convert_excel_to_csv_if_needed(xlsx_file, csv_file)
+# convert if needed
+convert_excel_to_csv(xlsx_file, csv_file)
 
 # עיבוד הקובץ בחתיכות וספירת שגיאות
 top_errors = process_file_in_chunks(csv_file, chunk_size=1000, top_n=5)
