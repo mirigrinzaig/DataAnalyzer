@@ -26,6 +26,7 @@ CREATE TABLE FamilyTree (
 );
 GO
 
+--insert data
 INSERT INTO Persons (Person_Id, Personal_Name, Family_Name, Gender, Father_Id, Mother_Id, Spouse_Id)
 VALUES
   (1, 'Adam', 'first', 'male', NULL, NULL, 2),
@@ -68,11 +69,40 @@ FROM Persons p
 WHERE p.Spouse_Id IS NOT NULL;
 
 
-UPDATE Persons
-SET Spouse_Id = p.Person_Id
+-- אחים ואחיות
+INSERT INTO FamilyTree (Person_Id, Relative_Id, Connection_Type)
+SELECT
+    p1.Person_Id,
+    p2.Person_Id,
+    CASE p2.Gender
+        WHEN 'male' THEN 'brother'
+        WHEN 'female' THEN 'sister'
+    END AS Connection_Type
+FROM Persons p1
+JOIN Persons p2
+    ON p1.Person_Id <> p2.Person_Id
+   AND p1.Father_Id = p2.Father_Id
+   AND p1.Mother_Id = p2.Mother_Id
+WHERE p2.Gender IN ('male', 'female');
+
+-- השלמה דו־כיוונית של spouse ב־FamilyTree
+INSERT INTO FamilyTree (Person_Id, Relative_Id, Connection_Type)
+SELECT s.Person_Id, p.Person_Id, 'spouse'
 FROM Persons p
 JOIN Persons s ON p.Spouse_Id = s.Person_Id
-WHERE s.Spouse_Id IS NULL;
+WHERE NOT EXISTS (
+    SELECT 1 FROM FamilyTree f
+    WHERE f.Person_Id = s.Person_Id
+      AND f.Relative_Id = p.Person_Id
+      AND f.Connection_Type = 'spouse'
+);
 
-select * from Persons
-select * from FamilyTree
+-- הצגת קשרים לכל אדם
+SELECT * FROM FamilyTree ORDER BY Person_Id, Connection_Type;
+
+-- בדיקה סופית של טבלת Persons (כולל השלמת בני זוג)
+SELECT * FROM Persons ORDER BY Person_Id;
+
+ALTER TABLE Persons
+ADD CONSTRAINT CHK_Gender_Values
+CHECK (Gender IN ('male', 'female'));
