@@ -22,7 +22,7 @@ const login = async (req, res) => {
         return res.status(401).json({ message: "סיסמא שגויה!" })
     //all the datails without password
     
-    const accessToken = jwt.sign({ id: user._id, role }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' })
+    const accessToken = jwt.sign({ id: foundUser._id, role }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' })
     const refreshToken = jwt.sign({ userName: foundUser.userName }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' })
 
     res.cookie("jwt", refreshToken, {
@@ -66,7 +66,7 @@ const registerOwner = async (req, res) => {
         const owner = await Owner.create(updateOwner)
 
         if (owner) {
-            return res.status(201).json({ message: "The user " + user.phoneNumber + " created" })
+            return res.status(201).json({ message: "The owner " + owner.phoneNumber + " created" })
         }
         else {
             //?צריך גם פה להחזיר טוקן
@@ -93,7 +93,7 @@ const registerSupplier = async (req, res) => {
         const supplier = await Supplier.create(updateSupplier)
 
         if (supplier) {
-            return res.status(201).json({ message: "The supplier " + user.companyName + " created" })
+            return res.status(201).json({ message: "The supplier " + supplier.companyName + " created" })
         }
         else {
             return res.status(400).json({ message: "Sorry, there is a mistake...." })

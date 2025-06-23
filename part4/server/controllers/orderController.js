@@ -92,4 +92,56 @@ const completeOrder = async (req, res) => {
     }
 };
 
-module.exports = { getOrders, getSupplierOrders, getOrder, approveOrder, completeOrder };
+const createOrder = async (req, res) => {
+    const { supplierId, products } = req.body;
+    if (!supplierId || !products || !products.length) {
+        return res.status(400).json({
+            error: true,
+            message: "Supplier ID and product list are required",
+            data: null
+        });
+    }
+    try {
+        const supplierExists = await Supplier.exists({ _id: supplierId });
+        if (!supplierExists) {
+            return res.status(400).json({
+                error: true,
+                message: "Supplier does not exist",
+                data: null
+            });
+        }
+        for (const product of products) {
+            const productExists = await Product.exists({ _id: product.productId });
+            if (!productExists) {
+                return res.status(400).json({
+                    
+                    error: true,
+                    message: `Product ${product.productId} does not exist`,
+                    data: null
+                });
+            }
+            if (product.quantity <= 0) {
+                return res.status(400).json({
+                    error: true,
+                    message: `Product quantity ${product.productId} is invalid`,
+                    data: null
+                });
+            }
+        }
+        const order = await Order.create({ supplierId, products });
+        res.status(201).json({
+            error: false,
+            message: "New order created",
+            data: order
+        });
+    } catch (error) {
+        console.error('Error creating order:', error);
+        res.status(400).json({
+            error: true,
+            message: error.message,
+            data: null
+        });
+    }
+};
+
+module.exports = { getOrders, getSupplierOrders, getOrder, approveOrder, completeOrder,createOrder };

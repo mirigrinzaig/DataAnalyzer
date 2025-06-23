@@ -20,7 +20,11 @@ const supplierSchema = new mongoose.Schema({
   role: {
     type: String,
     default: 'Supplier'
-  }
+  },
+  goodsList: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Product'
+  }]
 }, { timestamps: true });
 
 module.exports = mongoose.model('Supplier', supplierSchema);
