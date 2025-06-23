@@ -110,9 +110,38 @@ const addProduct = async (req, res) => {
     }
 };
 
+const getCheapestSupplierForProduct = async (req, res) => {
+  const { name } = req.params;
+
+  try {
+    const cheapest = await Product.find({ name })
+      .sort({ pricePerUnit: 1 })
+      .limit(1)
+      .populate('supplierId');
+
+    if (cheapest.length === 0) {
+      return res.status(404).json({ message: "לא נמצא ספק למוצר זה" });
+    }
+
+    return res.status(200).json({
+      product: cheapest[0].name,
+      price: cheapest[0].pricePerUnit,
+      minQuantity: cheapest[0].minimumOrderQty,
+      supplier: {
+        id: cheapest[0].supplier.supplierId,
+        companyName: cheapest[0].supplier.companyName
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "שגיאה בשרת" });
+  }
+};
+
 module.exports = {
     getProducts,
     getProduct,
     addProduct,
-    getSupplierProducts
+    getSupplierProducts,
+    getCheapestSupplierForProduct
 };

@@ -1,5 +1,6 @@
 const Owner = require('../models/Owner');
 const Supplier = require('../models/Supplier');
+const Product = require('../models/Product');
 const bcrypt = require("bcrypt")
 const jwt = require('jsonwebtoken')
 
@@ -12,7 +13,7 @@ const login = async (req, res) => {
     }
     const Model = role === 'Supplier' ? Supplier : Owner;
     const foundUser = await Model.findOne({ phoneNumber });
-    
+
     //not exist
     if (!foundUser)
         return res.status(401).json({ message: "אחד מהפרטים שגוי, נסה שנית" })
@@ -21,7 +22,7 @@ const login = async (req, res) => {
     if (!match)
         return res.status(401).json({ message: "סיסמא שגויה!" })
     //all the datails without password
-    
+
     const accessToken = jwt.sign({ id: foundUser._id, role }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' })
     const refreshToken = jwt.sign({ userName: foundUser.userName }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' })
 
@@ -79,18 +80,30 @@ const registerOwner = async (req, res) => {
 
 const registerSupplier = async (req, res) => {
     try {
-        const { companyName, phoneNumber, representativeName, password } = req.body;
+        const { companyName, phoneNumber, representativeName, password, products } = req.body;
         //required fields
-        if (!phoneNumber || !password)
-            return res.status(400).json({ message: "נא למלא את כל השדות" })
+        if (!companyName || !phoneNumber || !representativeName || !password) {
+            return res.status(400).json({ error: true, message: "Missing required fields" });
+        }
         //uniqe field
         const duplicate = await Supplier.findOne({ phoneNumber }).lean()
         if (duplicate)
             return res.status(409).json({ message: "המספר קיים במערכת" })
         //bcrypt-password
         const hashPass = await bcrypt.hash(password, 10)
-        const updateSupplier = { password: hashPass, phoneNumber,companyName,representativeName }
+        const updateSupplier = { password: hashPass, phoneNumber, companyName, representativeName }
         const supplier = await Supplier.create(updateSupplier)
+        //insert products:
+        if (products && Array.isArray(products)) {
+            const productDocs = products.map(product => ({
+                productName: product.name,
+                pricePerUnit: product.pricePerUnit,
+                minimumOrderQty: product.minQuantity,
+                supplierId: supplier._id
+            }));
+
+            await Product.insertMany(productDocs);
+        }
 
         if (supplier) {
             return res.status(201).json({ message: "The supplier " + supplier.companyName + " created" })
@@ -112,4 +125,4 @@ const logout = async (req, res) => {
     })
     res.json("you logg out")
 }
-module.exports = { login, registerOwner,registerSupplier, refresh, logout }
+module.exports = { login, registerOwner, registerSupplier, refresh, logout }
