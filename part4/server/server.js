@@ -23,6 +23,7 @@ app.use("/api/orders",require("./routes/orderRoutes"))
 app.use("/api/auth",require("./routes/authRoutes"))
 app.use("/api/products",require("./routes/productRoutes"))
 app.use("/api/suppliers",require("./routes/supplierRoutes"))
+app.use("/api/autoReorder",require("./routes/autoReorderRoutes"))
 app.get("/",(req,res)=>{
 res.send("this is the home page")
 })

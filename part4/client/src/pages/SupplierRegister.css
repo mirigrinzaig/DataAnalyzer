@@ -1,0 +1,40 @@
+.form-container {
+    max-width: 400px;
+    margin: 0px auto;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: white;
+    text-align: center;
+    font-family: Varela Round, Rubik, Assistant, Segoe UI, Arial, sans-serif !important;
+}
+
+.title-register {
+    margin-top: 15vh;
+}
+
+.form-container input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    direction: rtl;
+}
+
+.form-container button {
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 80px;
+    cursor: pointer;
+    margin-top: 10px;
+    color: black;
+    border: solid;
+    border-color: #8cbdb5e9;
+    background-color: white;
+}
+
+.form-container button:hover {
+    background-color: #5cc1b0e9;
+    color: white;
+}

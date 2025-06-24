@@ -3,11 +3,13 @@ const router = express.Router();
 const {
   registerOwner,
   registerSupplier,
-  login
+  login,
+  registerSupplierWithProducts,
+  loginEveryone
 } = require('../controllers/authController');
 
 router.post('/register/owner', registerOwner);
-router.post('/register/supplier', registerSupplier);
-router.post('/login', login);
+router.post('/register/supplier', registerSupplierWithProducts);
+router.post('/login', loginEveryone);
 
 module.exports = router;

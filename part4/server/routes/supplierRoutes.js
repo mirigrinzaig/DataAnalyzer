@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { createSupplier } = require('../controllers/supplierController');
+const { getAllSuppliers} = require('../controllers/supplierController');
 
 
-router.post('/', createSupplier);
+
+router.get('/', getAllSuppliers);
 
 module.exports = router;

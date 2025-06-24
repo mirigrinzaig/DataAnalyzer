@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import './SupplierRegister.css'
 
 const SupplierRegister = () => {
   const [formData, setFormData] = useState({
@@ -29,7 +30,14 @@ const SupplierRegister = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:2025/api/auth/register/supplier', formData,products);
+      await axios.post('http://localhost:2025/api/auth/register/supplier', {
+        ...formData,
+        products: products.map(p => ({
+          productName: p.name,
+          pricePerUnit: Number(p.pricePerUnit),
+          minimumOrderQty: Number(p.minQuantity)
+        }))
+      });
       alert('ההרשמה בוצעה בהצלחה!');
     } catch (err) {
       alert('שגיאה בהרשמה');
@@ -38,8 +46,8 @@ const SupplierRegister = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>רישום ספק</h2>
+    <form onSubmit={handleSubmit} className="form-container">
+      <h2 className='title-register'>רישום ספק</h2>
       <input name="companyName" placeholder="שם החברה" onChange={handleChange} />
       <input name="phoneNumber" placeholder="מספר טלפון" onChange={handleChange} />
       <input name="representativeName" placeholder="שם הנציג" onChange={handleChange} />

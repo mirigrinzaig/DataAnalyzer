@@ -32,6 +32,39 @@ const login = async (req, res) => {
     })
     res.json({ accessToken: accessToken })
 }
+
+//login
+const loginEveryone = async (req, res) => {
+    const { phoneNumber, password } = req.body
+    if (!phoneNumber || !password) {
+        return res.status(400).json({ message: "נא למלא את כל השדות" })
+    }
+
+   let foundUser = await Supplier.findOne({ phoneNumber });
+
+    //not exist
+    if (!foundUser) {
+        foundUser = await Owner.findOne({ phoneNumber });
+        if (!foundUser)
+            return res.status(401).json({ message: "אחד מהפרטים שגוי, נסה שנית" })
+    }
+    //validate password
+    const match = await bcrypt.compare(password, foundUser.password)
+    if (!match)
+        return res.status(401).json({ message: "סיסמא שגויה!" })
+    //all the datails without password
+    let role = foundUser instanceof Supplier ? 'Supplier' : 'Owner';
+
+
+    const accessToken = jwt.sign({ id: foundUser._id, role }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' })
+    const refreshToken = jwt.sign({ phoneNumber: foundUser.phoneNumber }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' })
+
+    res.cookie("jwt", refreshToken, {
+        httpOnly: true,
+        maxAge: 7 * 24 * 60 * 1000
+    })
+    res.json({ accessToken: accessToken,role })
+}
 const refresh = async (req, res) => {
     const cookies = req.cookies
     if (!cookies?.jwt) {
@@ -115,6 +148,40 @@ const registerSupplier = async (req, res) => {
         console.log(err)
     }
 }
+
+const registerSupplierWithProducts = async (req, res) => {
+  try {
+    const { companyName, phoneNumber, representativeName, password, products } = req.body;
+
+    // 1. יצירת ספק חדש
+    const newSupplier = new Supplier({
+      companyName,
+      phoneNumber,
+      representativeName,
+      password
+    });
+    await newSupplier.save();
+
+    // 2. יצירת מוצרים אם יש
+    if (Array.isArray(products) && products.length > 0) {
+      const productsToInsert = products.map(p => ({
+        supplierId: newSupplier._id,
+        productName: p.productName,
+        pricePerUnit: p.pricePerUnit,
+        minimumOrderQty: p.minimumOrderQty
+      }));
+      await Product.insertMany(productsToInsert);
+    }
+
+    res.status(201).json({
+      message: 'Supplier and products created successfully',
+      data: newSupplier
+    });
+  } catch (err) {
+    console.error('Error creating supplier and products:', err);
+    res.status(500).json({ error: 'Failed to create supplier and products', details: err });
+  }
+};
 const logout = async (req, res) => {
     const cookies = req.cookies
     if (!cookies?.jwt) {
@@ -125,4 +192,4 @@ const logout = async (req, res) => {
     })
     res.json("you logg out")
 }
-module.exports = { login, registerOwner, registerSupplier, refresh, logout }
+module.exports = { login, loginEveryone, registerOwner, registerSupplier,registerSupplierWithProducts ,refresh, logout }

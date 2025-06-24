@@ -1,75 +1,81 @@
-body{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+.home-container {
+    padding: 40px 20px;
+    text-align: center;
+    font-family: Varela Round, Rubik, Assistant, Segoe UI, Arial, sans-serif !important;
+    /* background-image: url("../../public/grocery-store.png"); */
+
+
+    
+    /* height: 100vh;
     width: 100vw;
     background-image :url("../../public/grocery-store.png");
     background-size: 100% 100%;
     background-repeat: no-repeat;
     margin: 0;
-    padding: 0;
-    background-color: black;
-     
+    padding: 0; */
+
 
 }
 
-
-article {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    text-align: center ;
-   background-color: rgba(5, 5, 5, 0.305);
-   color:white;
-   width: 100vw;
-   height: 100vh;
-   margin-top: 0;
-   
-   color: aqua;
-   font-family: cursive;
-   font-weight:lighter;
-   font-size: 1vw;
-}
-
-
-
-.title{
+.home-header {
     margin-top: 20vh;
-    color: coral;
-  font-size: 4.5vw;
-  font-weight: 2rem;
-   font-family: cursive;
+    margin-bottom: 40px;
 }
-.logo {
-    width: 10vw;
-    height: 20vh;
-    position: absolute;
-    right: 0;
-    top: 0;
-}
-i{
-   
-    cursor: pointer;
-    width: 10vw;
-    height: 15vh;
-    color: aliceblue;
-    position: absolute;
-    left: 1vw;
-    top: 0;
-    font-size: 2rem;
 
+.home-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    color: #2c3e50;
+}
 
+.home-header p {
+    font-size: 1.2rem;
+    color: #555;
 }
-.withoutBlack{
-    background-color: rgba(1, 1, 1, 0);
+
+.home-buttons {
+    margin-top: 40px;
 }
-@media screen and (max-width:992px) {
-  
-    .logo{
-        width: 15vw;
-        height: 12vh;
-      }
-  }
+
+.btn {
+    display: inline-block;
+    margin: 10px;
+    padding: 10px 29px;
+    border: none;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    max-width: 70px;
+    min-width: 70px;
+    border-radius: 40%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: black;
+    border: solid;
+    border-color: #8cbdb5e9;
+    background-color: white;
+}
+
+.btn:hover {
+    background-color: #3c9d8de9;
+    color: white;
+}
+
+.preview-section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+}
+
+.product-preview {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.product-card {
+    width: 150px;
+    padding: 15px;
+    background-color: #f8f8f8;
+    border-radius: 10px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+}

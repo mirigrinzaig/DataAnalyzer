@@ -1,16 +1,15 @@
 import { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import './LoginPage.css';
 
-export default function LoginPage() {
+const LoginPage=() => {
+  const navigate = useNavigate();
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState(""); // "manager" או "supplier"
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    if (!role) {
-      alert("בחר סוג משתמש: מנהל או ספק");
-      return;
-    }
 
     try {
       const res = await fetch("http://localhost:2025/api/auth/login", {
@@ -18,16 +17,22 @@ export default function LoginPage() {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ phoneNumber, password, role })
+        body: JSON.stringify({ phoneNumber, password})
       });
 
       const data = await res.json();
 
       if (res.ok) {
-        alert(`התחברת בהצלחה כ-${role === "Owner" ? "מנהל" : "ספק"}`);
-        // כאן ניתן לשמור טוקן / לעבור לעמוד מתאים
+        localStorage.setItem("user", JSON.stringify(data));
+        alert(`התחברת בהצלחה כ-${data.role === "Owner" ? "מנהל" : "ספק"}`);
+        if (data.role === "Owner") {
+          navigate("/admin");
+        } else {
+          navigate("/supplier");
+        }
       } else {
         alert(data.message || "שגיאה בהתחברות");
+        
       }
     } catch (err) {
       console.error(err);
@@ -36,8 +41,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div style={{ padding: 20 }}>
-      <h2>התחברות</h2>
+    <div className="login-container">
+      <h2 className="login-title">התחברות</h2>
       <form onSubmit={handleLogin}>
         <input
           type="text"
@@ -53,18 +58,12 @@ export default function LoginPage() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          style={{ display: "block", marginBottom: 10 }}
         />
-
-        <div style={{ marginBottom: 10 }}>
-          <button type="button" onClick={() => setRole("Owner")}>כניסת מנהל</button>
-          <button type="button" onClick={() => setRole("Supplier")} style={{ marginLeft: 10 }}>
-            כניסת ספק
-          </button>
-        </div>
 
         <button type="submit">התחבר</button>
       </form>
     </div>
   );
 }
+
+export default LoginPage;

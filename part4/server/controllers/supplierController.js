@@ -1,15 +1,20 @@
 const Supplier = require('../models/Supplier');
 
-const createSupplier = async (req, res) => {
+
+
+
+const getAllSuppliers = async (req, res) => {
   try {
-    const newSupplier = new Supplier(req.body);
-    await newSupplier.save();
-    res.status(201).json({ message: 'Supplier created', data: newSupplier });
+    const suppliers = await Supplier.find(); 
+    res.status(200).json(suppliers);
   } catch (err) {
-    res.status(500).json({ error: 'Failed to create supplier', details: err });
+    res.status(500).json({ error: 'שגיאה בעת שליפת ספקים', details: err });
   }
 };
 
+
+
+
 module.exports = {
-   createSupplier
+  getAllSuppliers
 };

@@ -1,5 +1,7 @@
 .App {
   text-align: center;
+  /* direction: rtl !important; */
+  font-family: Varela Round, Rubik, Assistant, Segoe UI, Arial, sans-serif !important;
 }
 
 .App-logo {

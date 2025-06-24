@@ -1,9 +1,9 @@
 const Product = require("../models/Product");
 
 const getProducts = async (req, res) => {
-    const limit = parseInt(req.query.limit) || 0;
+    
     try {
-        const products = await Product.find({}).limit(limit).lean();
+        const products = await Product.find().populate("supplierId", "companyName");
         if (!products.length) {
             return res.status(404).json({
                 error: true,
@@ -124,12 +124,12 @@ const getCheapestSupplierForProduct = async (req, res) => {
     }
 
     return res.status(200).json({
-      product: cheapest[0].name,
+      product: cheapest[0].productName,
       price: cheapest[0].pricePerUnit,
       minQuantity: cheapest[0].minimumOrderQty,
       supplier: {
-        id: cheapest[0].supplier.supplierId,
-        companyName: cheapest[0].supplier.companyName
+        id: cheapest[0].supplierId._id,
+        companyName: cheapest[0].supplierId.companyName
       }
     });
   } catch (err) {
