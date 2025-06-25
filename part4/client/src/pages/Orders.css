@@ -1,0 +1,99 @@
+.orders-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #f7f9fc;
+    min-height: 100vh;
+    direction: rtl !important;
+    font-family: Varela Round, Rubik, Assistant, Segoe UI, Arial, sans-serif !important;
+
+}
+
+.orders-container h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 28px;
+    color: #333;
+}
+
+.order-card {
+    background-color: white;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    transition: 0.3s ease;
+    text-align: right;
+}
+
+.order-card:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    border: solid;
+    border-color: #08826e;
+}
+
+.order-card h4 {
+    margin-bottom: 10px;
+    color: #444;
+}
+
+.order-products {
+    padding-right: 20px;
+}
+
+.order-products li {
+    margin-bottom: 4px;
+}
+
+.status {
+    padding: 6px 12px;
+    display: inline-block;
+    border-radius: 12px;
+    font-weight: bold;
+    color: white;
+    background-color: #888;
+    margin-bottom: 10px;
+}
+
+.status.inProgress {
+    background-color: #f9a825;
+}
+
+.status.completed {
+    background-color: #4caf50;
+}
+
+.status.pending {
+    background-color: #2196f3;
+}
+
+button.action-btn {
+    margin-top: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    color: black;
+    border: solid;
+    border-color: #8cbdb5e9;
+    background-color: white;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button.action-btn:hover {
+    background-color: #3c9d8de9;
+    color: white;
+}
+
+.manager-dashboard {
+    font-family: Varela Round, Rubik, Assistant, Segoe UI, Arial, sans-serif !important;
+    padding-top: 100px;
+    text-align: center;
+
+
+}
+
+.supplier-dashboard {
+    padding-top: 100px;
+}

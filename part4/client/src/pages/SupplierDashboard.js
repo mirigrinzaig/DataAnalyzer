@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import './Orders.css';
 
 const SupplierDashboard = () => {
   const [orders, setOrders] = useState([]);
@@ -18,19 +19,19 @@ const SupplierDashboard = () => {
     const user = localStorage.getItem('user');
     const accessToken = user ? JSON.parse(user).accessToken : null;
   if (!accessToken) {
-    alert("אין התחברות");
+    console.log("אין התחברות");
     return;
   }
   
   const userData = parseJwt(accessToken);
   if (!userData || !userData.id) {
-    alert("טוקן לא תקין");
+    console.log("טוקן לא תקין");
     return;
   }
   
   const supplierId = userData.id;
     if (!supplierId) {
-      alert("אין התחברות");
+      console.log("אין התחברות");
       return;
     }
 
@@ -39,7 +40,8 @@ const SupplierDashboard = () => {
         console.log(`http://localhost:2025/api/orders/supplier/${supplierId}`);
 
         const res = await axios.get(`http://localhost:2025/api/orders/supplier/${supplierId}`);
-        setOrders(res.data);
+        const sorted = [...res.data].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setOrders(sorted);
       } catch (err) {
         console.error(err);
       }
@@ -68,44 +70,18 @@ const SupplierDashboard = () => {
     }
   };
 
-//   return (
-//     <div>
-//       <h2>ההזמנות שלי</h2>
-//       {orders.length === 0 ? (
-//         <p>אין הזמנות להצגה</p>
-//       ) : (
-//         <ul>
-//           {orders.map((order) => (
-//             <li key={order._id}>
-//               <p>סטטוס: {order.status}</p>
-//               <p>מוצרים:</p>
-//               <ul>
-//                 {order.products.map((p, i) => (
-//                   <li key={i}>{p.productId.productName} - כמות: {p.quantity}</li>
-//                 ))}
-//               </ul>
-//               <hr />
-//             </li>
-//           ))}
-//         </ul>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default SupplierDashboard;
 return (
-    <div>
-      <h2>ההזמנות שלי</h2>
+    <div className='orders-container' style={{ paddingTop: '100px' ,marginTop:"0"}  }>
+      <h2 >ההזמנות שלי</h2>
       {Array.isArray(orders) && orders.length === 0 ? (
-        <p>אין הזמנות להצגה</p>
+        <p style={{marginTop:"20vh"}}>אין הזמנות להצגה</p>
       ) : (
         <ul>
           {orders.map((order) => (
-            <li key={order._id}>
+            <div key={order._id} className='order-card'>
               <p><b>סטטוס:</b> {order.status}</p>
               <p><b>מוצרים:</b></p>
-              <ul>
+              <ul className='order-products'>
                 {order.products.map((p, i) => (
                   <li key={i}>
                     {p.productId?.productName || "מוצר לא ידוע"} – כמות: {p.quantity}
@@ -114,7 +90,7 @@ return (
               </ul>
 
               {order.status === "pending" && (
-                <button onClick={() => updateOrderStatus(order._id, "approve")}>
+                <button  className="action-btn" onClick={() => updateOrderStatus(order._id, "approve")}>
                   אשר הזמנה
                 </button>
               )}
@@ -122,7 +98,7 @@ return (
               
 
               <hr />
-            </li>
+            </div>
           ))}
         </ul>
       )}

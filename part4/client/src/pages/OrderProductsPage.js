@@ -1,109 +1,6 @@
-// import axios from 'axios';
-// import React, { useEffect, useState } from "react";
-// import { useNavigate } from "react-router-dom";
-
-// export default function OrderProductsPage() {
-//   const [suppliers, setSuppliers] = useState([]);
-//   const [products, setProducts] = useState([]);
-//   const [selectedSupplier, setSelectedSupplier] = useState("");
-//   const [selectedProducts, setSelectedProducts] = useState({});
-//   const navigate = useNavigate();
-
-//   useEffect(() => {
-//   fetch("http://localhost:2025/api/suppliers")
-//     .then((res) => res.json())
-//     .then(setSuppliers)
-//     .catch((err) => console.error("שגיאה בהבאת ספקים:", err));
-
-//   fetch("http://localhost:2025/api/products")
-//     .then((res) => res.json())
-//     .then((data) => {
-//       if (Array.isArray(data.data)) {
-//         setProducts(data.data);
-//       } else if (Array.isArray(data.data.products)) {
-//         setProducts(data.data.products);
-//       } else {
-//         console.error("מבנה לא צפוי בתשובת products:", data);
-//         setProducts([]);
-//       }
-//     })
-//     .catch((err) => console.error("שגיאה בהבאת מוצרים:", err));
-// }, []);
-
-//   const handleProductQuantityChange = (productId, quantity) => {
-//     setSelectedProducts((prev) => ({
-//       ...prev,
-//       [productId]: quantity
-//     }));
-//   };
-
-//   const handleSubmit = async () => {
-//     const orderItems = Object.entries(selectedProducts)
-//       .filter(([_, qty]) => qty > 0)
-//       .map(([id, qty]) => ({
-//         productId: id,
-//         quantity: Number(qty)
-//       }));
-
-//     if (!selectedSupplier || orderItems.length === 0) {
-//       alert("בחר ספק והזן כמות למוצר אחד לפחות");
-//       return;
-//     }
-
-//     const res = await fetch("http://localhost:2025/orders", {
-//       method: "POST",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify({
-//         supplierId: selectedSupplier,
-//         products: orderItems
-//       })
-//     });
-
-//     if (res.ok) {
-//       alert("ההזמנה נשלחה בהצלחה");
-//       navigate("/manager");
-//     } else {
-//       alert("שגיאה בשליחת ההזמנה");
-//     }
-//   };
-
-//   return (
-//     <div style={{ padding: 20 }}>
-//       <h2>יצירת הזמנה חדשה</h2>
-
-//       <label>בחר ספק:</label><br />
-//       <select onChange={(e) => setSelectedSupplier(e.target.value)} value={selectedSupplier}>
-//         <option value="">--בחר--</option>
-//         {suppliers.map((sup) => (
-//           <option key={sup._id} value={sup._id}>
-//             {sup.companyName}
-//           </option>
-//         ))}
-//       </select>
-
-//       <h3>בחר מוצרים להזמנה:</h3>
-//       {products.map((p) => (
-//         <div key={p._id} style={{ marginBottom: 10 }}>
-//           <label>{p.name} – מחיר: ₪{p.price}</label><br />
-//           <input
-//             type="number"
-//             min="0"
-//             placeholder="כמות"
-//             value={selectedProducts[p._id] || ""}
-//             onChange={(e) => handleProductQuantityChange(p._id, e.target.value)}
-//           />
-//         </div>
-//       ))}
-
-//       <button onClick={handleSubmit} style={{ marginTop: 20 }}>
-//         שלח הזמנה
-//       </button>
-//     </div>
-//   );
-// }
-
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "./OrderProductsPage.css";
 
 export default function OrderProductsPage() {
   const [suppliers, setSuppliers] = useState([]);
@@ -210,7 +107,7 @@ export default function OrderProductsPage() {
   };
 
   return (
-    <div style={{ padding: 20 }}>
+    <div className="order-page-container">
       <h2>יצירת הזמנה חדשה</h2>
 
       {loadingSuppliers ? (
@@ -242,7 +139,7 @@ export default function OrderProductsPage() {
         <>
           <h3>בחר מוצרים להזמנה:</h3>
           {products.map((p) => (
-            <div key={p._id} style={{ marginBottom: 10 }}>
+            <div key={p._id} className="product-item">
               <label>
                 {p.productName} – מחיר: ₪{p.pricePerUnit} (מינימום: {p.minimumOrderQty})
               </label><br />
@@ -259,13 +156,14 @@ export default function OrderProductsPage() {
       )}
 
       {selectedSupplier && products.length > 0 && !loadingProducts && (
-        <button onClick={handleSubmit} style={{ marginTop: 20 }}>
-          שלח הזמנה
-        </button>
+        <div style={{ textAlign: "center", marginTop: "20px" }}>
+          <button onClick={handleSubmit} style={{ marginTop: 20 }}>
+            שלח הזמנה
+          </button></div>
       )}
 
       <hr />
-     
+
     </div>
   );
 }

@@ -10,6 +10,7 @@ import NavBar from "./components/NavBar";
 import OrderProductsPage from "./pages/OrderProductsPage";
 import MannagerDashboard from "./pages/ManagerDashboard";
 import Products from "./pages/Products";
+import CheckoutPage from "./pages/CheckoutPage";
 import './App.css';
 
 
@@ -28,6 +29,7 @@ function App() {
         <Route path="/admin" element={<MannagerDashboard />} />
         <Route path="/admin/order" element={<OrderProductsPage />} />
         <Route path="/orders" element={<OrdersPage />} />
+        <Route path="/checkout" element={<CheckoutPage/>}/>
       </Routes>
     </Router>
   );

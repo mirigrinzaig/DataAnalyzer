@@ -40,7 +40,7 @@ const loginEveryone = async (req, res) => {
         return res.status(400).json({ message: "נא למלא את כל השדות" })
     }
 
-   let foundUser = await Supplier.findOne({ phoneNumber });
+    let foundUser = await Supplier.findOne({ phoneNumber });
 
     //not exist
     if (!foundUser) {
@@ -63,7 +63,7 @@ const loginEveryone = async (req, res) => {
         httpOnly: true,
         maxAge: 7 * 24 * 60 * 1000
     })
-    res.json({ accessToken: accessToken,role })
+    res.json({ accessToken: accessToken, role })
 }
 const refresh = async (req, res) => {
     const cookies = req.cookies
@@ -150,37 +150,45 @@ const registerSupplier = async (req, res) => {
 }
 
 const registerSupplierWithProducts = async (req, res) => {
-  try {
-    const { companyName, phoneNumber, representativeName, password, products } = req.body;
+    try {
+        const { companyName, phoneNumber, representativeName, password, products } = req.body;
 
-    // 1. יצירת ספק חדש
-    const newSupplier = new Supplier({
-      companyName,
-      phoneNumber,
-      representativeName,
-      password
-    });
-    await newSupplier.save();
+        //required fields
+        if (!companyName || !phoneNumber || !representativeName || !password) {
+            return res.status(400).json({ error: true, message: "Missing required fields" });
+        }
 
-    // 2. יצירת מוצרים אם יש
-    if (Array.isArray(products) && products.length > 0) {
-      const productsToInsert = products.map(p => ({
-        supplierId: newSupplier._id,
-        productName: p.productName,
-        pricePerUnit: p.pricePerUnit,
-        minimumOrderQty: p.minimumOrderQty
-      }));
-      await Product.insertMany(productsToInsert);
+        //uniqe field
+        const duplicate = await Supplier.findOne({ phoneNumber }).lean()
+        if (duplicate)
+            return res.status(409).json({ message: "המספר קיים במערכת" })
+
+        //bcrypt-password
+        const hashPass = await bcrypt.hash(password, 10)
+        const updateSupplier = { password: hashPass, phoneNumber, companyName, representativeName }
+        const supplier = await Supplier.create(updateSupplier)
+
+        
+
+        // 2. יצירת מוצרים אם יש
+        if (Array.isArray(products) && products.length > 0) {
+            const productsToInsert = products.map(p => ({
+                supplierId: supplier._id,
+                productName: p.productName,
+                pricePerUnit: p.pricePerUnit,
+                minimumOrderQty: p.minimumOrderQty
+            }));
+            await Product.insertMany(productsToInsert);
+        }
+
+        res.status(201).json({
+            message: 'Supplier and products created successfully',
+            data: supplier
+        });
+    } catch (err) {
+        console.error('Error creating supplier and products:', err);
+        res.status(500).json({ error: 'Failed to create supplier and products', details: err });
     }
-
-    res.status(201).json({
-      message: 'Supplier and products created successfully',
-      data: newSupplier
-    });
-  } catch (err) {
-    console.error('Error creating supplier and products:', err);
-    res.status(500).json({ error: 'Failed to create supplier and products', details: err });
-  }
 };
 const logout = async (req, res) => {
     const cookies = req.cookies
@@ -192,4 +200,4 @@ const logout = async (req, res) => {
     })
     res.json("you logg out")
 }
-module.exports = { login, loginEveryone, registerOwner, registerSupplier,registerSupplierWithProducts ,refresh, logout }
+module.exports = { login, loginEveryone, registerOwner, registerSupplier, registerSupplierWithProducts, refresh, logout }

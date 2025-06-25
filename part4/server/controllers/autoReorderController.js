@@ -1,51 +1,62 @@
+const Stock = require("../models/Stock");
 const Product = require("../models/Product");
-const Supplier = require("../models/Supplier");
 const Order = require("../models/Order");
 
 const handleCheckout = async (req, res) => {
   try {
-    const purchases = req.body;
+    const purchases = req.body; // דוגמה: { "לחם": 1, "חלב": 2 }
 
-    for (let productName in purchases) {
-      const quantityPurchased = purchases[productName];
-      const product = await Product.findOne({ name: productName });
+    for (const productName in purchases) {
+      const quantityPurchased = Number(purchases[productName]);
 
-      if (!product) continue;
+      const allStocks = await Stock.find().populate("productId");
+      const stockItem = allStocks.find(item => item.productId?.productName === productName);
+      if (!allStocks || !stockItem) {
+        console.log(` לא נמצא פריט מלאי בשם: ${productName}`);
+        continue;
+      }
 
-      product.stock = Math.max(0, product.stock - quantityPurchased);
-      await product.save();
+      // עדכון המלאי
+      stockItem.currentQuantity = Math.max(0, stockItem.currentQuantity - quantityPurchased);
+      await stockItem.save();
 
-      if (product.stock < product.minQuantity) {
-       const cheapest = await Product.find({ name: product.name })
+      // בדיקה אם צריך להזמין מחדש
+      if (stockItem.currentQuantity < stockItem.minimumQuantity) {
+        // מציאת המוצר הזול ביותר לאותו שם
+        const cheapestProduct = await Product.find({ productName })
           .sort({ pricePerUnit: 1 })
           .limit(1)
           .populate("supplierId");
 
-        if (cheapest.length === 0 || !cheapest[0].supplierId) {
-          console.log("⚠️ אין ספק פעיל למוצר: " + product.name);
+        if (!cheapestProduct.length || !cheapestProduct[0].supplierId) {
+          console.log(` אין ספק זמין עבור "${productName}"`);
           continue;
         }
-        const cheapestProduct = cheapest[0];
-        const supplier = cheapestProduct.supplierId;
 
-        const quantityToOrder = product.minQuantity * 2;
+        const bestProduct = cheapestProduct[0];
+        const supplier = bestProduct.supplierId;
+
+        // יצירת הזמנה
+        const quantityToOrder = stockItem.minimumQuantity * 2;
 
         const order = new Order({
           supplierId: supplier._id,
-          supplierName: supplier.companyName,
-          products: [{ name: product.productName, quantity: quantityToOrder }],
-          status: "בתהליך"
+          products: [{
+            productId: bestProduct._id,
+            quantity: quantityToOrder
+          }],
+          status: "pending"
         });
 
         await order.save();
-        console.log(`✅ הזמנה אוטומטית ל-${product.name} מהספק ${supplier.companyName}`);
+        console.log(` בוצעה הזמנה אוטומטית ל-${productName} מהספק ${supplier.companyName}`);
       }
     }
 
-    res.json({ success: true });
+    res.json({ success: true, message: "המלאי עודכן והוזמנו מוצרים חסרים לפי הצורך." });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "שגיאה בעיבוד קופה" });
+    console.error("שגיאה ב-checkout:", err);
+    res.status(500).json({ success: false, message: "שגיאה בטיפול בקופה." });
   }
 };
 

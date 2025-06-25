@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import './SupplierRegister.css'
 
 const SupplierRegister = () => {
+
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     companyName: '',
     phoneNumber: '',
@@ -38,6 +42,7 @@ const SupplierRegister = () => {
           minimumOrderQty: Number(p.minQuantity)
         }))
       });
+      navigate('/supplier');
       alert('ההרשמה בוצעה בהצלחה!');
     } catch (err) {
       alert('שגיאה בהרשמה');

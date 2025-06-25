@@ -1,12 +1,13 @@
 const mongoose = require('mongoose');
 
 const stockSchema = new mongoose.Schema({
-  name: {
+  productName: {
     type: String,
-    required: true
+    required: false
   },
-  uniqueId: {
-    type: String,
+  productId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Product",
     required: true,
     unique: true
   },
@@ -18,21 +19,8 @@ const stockSchema = new mongoose.Schema({
   minimumQuantity: {
     type: Number,
     required: true
-  },
-  supplierProducts: [
-    {
-      supplierId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Supplier',
-        required: true
-      },
-      productId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product',
-        required: true
-      }
-    }
-  ]
+  }
+ 
 }, { timestamps: true });
 
 module.exports = mongoose.model('Stock', stockSchema);

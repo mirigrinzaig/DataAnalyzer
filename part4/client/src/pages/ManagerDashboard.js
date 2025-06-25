@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import './Orders.css';
 
 const ManagerDashboard = () => {
     const [orders, setOrders] = useState([]);
@@ -11,6 +12,7 @@ const ManagerDashboard = () => {
             try {
                 const res = await axios.get("http://localhost:2025/api/orders");
                 const ordersData = Array.isArray(res.data.data) ? res.data.data : [];
+                ordersData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setOrders(ordersData);
             } catch (err) {
                 console.error("שגיאה בשליפת הזמנות:", err);
@@ -41,40 +43,40 @@ const ManagerDashboard = () => {
 
 
     return (
-        <div style={{ padding: 20 }}>
-            <h2>לוח ניהול - בעל מכולת</h2>
-            <button onClick={() => navigate("/admin/order")} style={{ marginBottom: 20 }}>
-                הזמנת סחורה חדשה
-            </button>
+        <div className='manager-dashboard'>
+            <h2>ממשק ניהול - בעל מכולת</h2>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+                <button className="action-btn" onClick={() => navigate("/admin/order")}>
+                    הזמנת סחורה חדשה
+                </button>
+            </div>
+            <div className='orders-container'>
+                <h2>רשימת ההזמנות</h2>
 
-            {orders.length === 0 ? (
-                <p>אין הזמנות להצגה.</p>
-            ) : (
-                orders.map((order) => (
-                    <div key={order._id} style={{
-                        border: "1px solid gray",
-                        padding: 10,
-                        marginBottom: 10,
-                        borderRadius: 8
-                    }}>
-                        <p><b>ספק:</b> {order.supplierId?.companyName}</p>
-                        <p><b>סטטוס:</b> {order.status}</p>
-                        <p><b>מוצרים:</b></p>
-                        <ul>
-                            {order.products.map((prod, idx) => (
-                                <li key={idx}>
-                                    {prod.productId.productName} – כמות: {prod.quantity}
-                                </li>
-                            ))}
-                        </ul>
-                        {order.status === "inProgress" && (
-                            <button onClick={() => updateOrderStatus(order._id, "complete")}>
-                                סמן כהושלמה
-                            </button>
-                        )}
-                    </div>
-                ))
-            )}
+                {orders.length === 0 ? (
+                    <p>אין הזמנות להצגה.</p>
+                ) : (
+                    orders.map((order) => (
+                        <div key={order._id} className='order-card'>
+                            <h4>מספר הזמנה: {order._id.slice(-5)}</h4>
+                            <p><b>חברה:</b> {order.supplierId?.companyName}</p>
+                            <div className={`status ${order.status}`}>{order.status}</div>
+                            <p><b>מוצרים:</b></p>
+                            <ul className='order-products'>
+                                {order.products.map((prod, idx) => (
+                                    <li key={idx}>
+                                        {prod.productId.productName} – כמות: {prod.quantity}
+                                    </li>
+                                ))}
+                            </ul>
+                            {order.status === "inProgress" && (
+                                <button className='action-btn' onClick={() => updateOrderStatus(order._id, "complete")}>
+                                    סמן כהושלמה
+                                </button>
+                            )}
+                        </div>
+                    ))
+                )}</div>
         </div>
     );
 }
