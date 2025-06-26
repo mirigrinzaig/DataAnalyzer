@@ -3,7 +3,7 @@ from collections import Counter
 import os
 import win32com.client
 
-
+# A and B
 # function to convert to CSV for more efficient:
 def convert_excel_to_csv(xlsx_path, csv_path):
     # If CSV file doesn't exist – conversion
@@ -31,7 +31,7 @@ def convert_excel_to_csv(xlsx_path, csv_path):
         print("csv file already exist")
     return True
 
-
+# A
 # function to read chunks and count the appears of every error type
 def read_chunks_return_common_error(filepath, chunk_size=100000, top_n=5):
     frequency = Counter()
@@ -50,44 +50,6 @@ def read_chunks_return_common_error(filepath, chunk_size=100000, top_n=5):
 
     return frequency.most_common(top_n)
 
-
-# function to read series file and calculate the avg
-def process_time_series(filepath, output_path='final_hourly.csv', daily_folder='daily_outputs'):
-    print("Reading time series data...")
-    df = pd.read_csv(filepath)
-
-    # convert to datime format
-    df['timestamp'] = pd.to_datetime(df['timestamp'], errors='coerce', dayfirst=True)
-
-    # delete errors
-    df = df.dropna(subset=['timestamp', 'value'])
-    df = df.drop_duplicates()
-
-    # convert value to number
-    df['value'] = pd.to_numeric(df['value'], errors='coerce')
-    df = df.dropna(subset=['value'])
-
-    # create daily output folder
-    os.makedirs(daily_folder, exist_ok=True)
-    df['date'] = df['timestamp'].dt.date
-
-    all_days = []
-    for date, group in df.groupby('date'):
-        group['hour'] = group['timestamp'].dt.floor('h')
-        hourly_avg = group.groupby('hour')['value'].mean().reset_index()
-        hourly_avg.columns = ['timestamp', 'average']
-        all_days.append(hourly_avg)
-
-        # saving daily output
-        daily_file = os.path.join(daily_folder, f"{date}_hourly.csv")
-        hourly_avg.to_csv(daily_file, index=False)
-
-    # concat result
-    final_df = pd.concat(all_days).sort_values('timestamp')
-    final_df.to_csv(output_path, index=False)
-    print(f" Final hourly averages saved to {output_path}")
-
-
 # main:
 xlsx_err_file = './logs.txt.xlsx'
 csv_err_file = './logs.txt.csv'
@@ -102,9 +64,8 @@ if convert_excel_to_csv(xlsx_err_file, csv_err_file):
             print(f"{code}: appear {count} times")
     else:
         print("No error codes found in the file.")
-# execute part 2:
 
-xlsx_time_file = './time_series.xlsx'
-csv_time_file = './time_series.csv'
-if convert_excel_to_csv(xlsx_time_file, csv_time_file):
-    process_time_series(csv_time_file)
+# סיבוכיות זמן ומקום – סעיף א'
+# זמן: O(N) – כל שורה נקראת ומעובדת פעם אחת בלבד, ללא לולאות מקוננות.
+# מקום: יעיל מאוד – הקובץ מעובד ב־chunks (לדוגמה: 500,000 שורות בכל פעם) ולא נטען כולו לזיכרון.
+# הנתונים נשמרים במבנה Counter – שמכיל רק את קודי השגיאה ומספר ההופעות שלהם, כלומר גודל הזיכרון תלוי במספר סוגי השגיאות השונים ולא בגודל הקובץ כולו.
