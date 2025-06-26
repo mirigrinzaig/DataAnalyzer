@@ -46,7 +46,12 @@
     border: solid;
     border-color: #8cbdb5e9;
      background-color: white;
+     cursor: pointer;
     
+}
+.link:hover{
+    color: #18685be9;
+    box-shadow: #333;
 }
 
 a {
