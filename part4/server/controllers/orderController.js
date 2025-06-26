@@ -1,6 +1,7 @@
 const Order = require("../models/Order");
 const Supplier = require("../models/Supplier");
 const Product = require("../models/Product");
+const Stock = require("../models/Stock");
 
 const getOrders = async (req, res) => {
     const limit = parseInt(req.query.limit) || 0;
@@ -86,6 +87,17 @@ const completeOrder = async (req, res) => {
         const { orderId } = req.params;
         const order = await Order.findByIdAndUpdate(orderId, { status: 'completed' }, { new: true });
         if (!order) return res.status(404).json({ error: 'Order not found' });
+        // Update stock quantities:
+        for (const item of order.products) {
+            const stock = await Stock.findOne({ productId: item.productId._id });
+            if (stock) {
+                stock.currentQuantity += item.quantity;
+                await stock.save();
+            } else {
+                console.warn("⚠️ מלאי לא נמצא עבור מוצר:", item.productId?.productName);
+            }
+        }
+
         res.json(order);
     } catch (err) {
         res.status(500).json({ error: 'Failed to complete order', details: err });
@@ -114,7 +126,7 @@ const createOrder = async (req, res) => {
             const productExists = await Product.exists({ _id: product.productId });
             if (!productExists) {
                 return res.status(400).json({
-                    
+
                     error: true,
                     message: `Product ${product.productId} does not exist`,
                     data: null
@@ -144,4 +156,4 @@ const createOrder = async (req, res) => {
     }
 };
 
-module.exports = { getOrders, getSupplierOrders, getOrder, approveOrder, completeOrder,createOrder };
+module.exports = { getOrders, getSupplierOrders, getOrder, approveOrder, completeOrder, createOrder };
