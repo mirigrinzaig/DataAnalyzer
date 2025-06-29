@@ -1,0 +1,41 @@
+.homepage-footer {
+  background-color: #08826e;
+  color: #eee;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  margin-top: 3rem;
+  border-top: 3px solid #444;
+  font-family: 'Arial', sans-serif;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.footer-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #ccc;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: color 0.2s ease;
+}
+
+.footer-item:hover {
+  color: #4caf50;
+}
+
+.footer-icon {
+  font-size: 1.2rem;
+  color: #4caf50;
+}
+
+.footer-note {
+  font-size: 0.8rem;
+  color: #faf9f9;
+}

@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import './NavBar.css';
 
 
-export default function NavBar() {
+const NavBar=()=>{
 
   const parseJwt = (token) => {
     try {
@@ -64,3 +64,4 @@ export default function NavBar() {
     </nav>
   );
 }
+export default NavBar;

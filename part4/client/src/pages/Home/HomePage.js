@@ -1,9 +1,9 @@
 import "./HomePage.css";
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link} from 'react-router-dom';
 import { useEffect, useState } from "react";
 
-export default function HomePage() {
+const HomePage=() => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
@@ -24,11 +24,7 @@ export default function HomePage() {
           <Link to="/register-supplier" className="btn">רישום</Link>
         </div>
       </header>
-
-      <footer style={{ marginTop: 40 }}>
-        <hr />
-        <p><b>צור קשר:</b> טלפון: 03-1234567 | כתובת: רחוב הדוגמה 5, חמלה</p>
-      </footer>
     </div>
   );
 }
+export default HomePage;

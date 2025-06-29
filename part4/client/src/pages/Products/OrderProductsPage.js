@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./OrderProductsPage.css";
 
-export default function OrderProductsPage() {
+const OrderProductsPage= () => {
   const [suppliers, setSuppliers] = useState([]);
   const [products, setProducts] = useState([]);
   const [selectedSupplier, setSelectedSupplier] = useState("");
@@ -96,15 +96,6 @@ export default function OrderProductsPage() {
     }
   };
 
-  const testConnection = () => {
-    fetch("http://localhost:2025/api/products/supplier/test-id")
-      .then((res) => {
-        console.log("בדיקת חיבור, סטטוס:", res.status);
-        return res.json();
-      })
-      .then(console.log)
-      .catch(console.error);
-  };
 
   return (
     <div className="order-page-container">
@@ -167,3 +158,5 @@ export default function OrderProductsPage() {
     </div>
   );
 }
+
+export default OrderProductsPage;

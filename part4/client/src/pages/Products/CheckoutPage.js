@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import './CheckoutPage.css';
 
-export default function CheckoutPage() {
+const CheckoutPage= () => {
   const [stockItems, setStockItems] = useState([]);
   const [cart, setCart] = useState({});
   const [message, setMessage] = useState("");
@@ -102,3 +102,4 @@ export default function CheckoutPage() {
     </div>
   );
 }
+export default CheckoutPage;

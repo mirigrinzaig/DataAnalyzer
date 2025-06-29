@@ -1,20 +1,18 @@
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import SupplierRegister from './pages/SupplierRegister';
-// import SupplierLogin from './pages/SupplierLogin';
-import SupplierDashboard from './pages/SupplierDashboard';
-import HomePage from './pages/HomePage';
-import LoginPage from './pages/LoginPage';
-import OrdersPage from './pages/OrderPage';
-// import AddProductPage from "./pages/AddProductPage";
+import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
+import SupplierRegister from './pages/Auth/SupplierRegister';
+import SupplierDashboard from './pages/Supplier/SupplierDashboard';
+import HomePage from './pages/Home/HomePage';
+import LoginPage from './pages/Auth/LoginPage';
 import NavBar from "./components/NavBar";
-import OrderProductsPage from "./pages/OrderProductsPage";
-import MannagerDashboard from "./pages/ManagerDashboard";
-import Products from "./pages/Products";
-import CheckoutPage from "./pages/CheckoutPage";
+import OrderProductsPage from "./pages/Products/OrderProductsPage";
+import MannagerDashboard from "./pages/Admin/ManagerDashboard";
+import Products from "./pages/Products/Products";
+import CheckoutPage from "./pages/Products/CheckoutPage";
+import Footer from "./components/Footer";
 import './App.css';
 
 
-function App() {
+const App=()=> {
   return (
     <Router>
       <NavBar />
@@ -23,14 +21,12 @@ function App() {
         <Route path="/products" element={<Products/>}/>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register-supplier" element={<SupplierRegister />} />
-        {/* <Route path="/login-supplier" element={<SupplierLogin />} /> */}
         <Route path="/supplier" element={<SupplierDashboard />} />
-        {/* <Route path="/supplier/add-products" element={<AddProductPage />} /> */}
         <Route path="/admin" element={<MannagerDashboard />} />
         <Route path="/admin/order" element={<OrderProductsPage />} />
-        <Route path="/orders" element={<OrdersPage />} />
         <Route path="/checkout" element={<CheckoutPage/>}/>
       </Routes>
+      <Footer/>
     </Router>
   );
 }
